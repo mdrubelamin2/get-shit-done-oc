@@ -53,7 +53,8 @@ extract_phase_section() {
   local PADDED_PHASE=$(printf "%02d" "$PHASE_PATTERN" 2>/dev/null || echo "$PHASE_NUM")
 
   # Extract from "## Phase XX" to next "## Phase" or "---" or end of phases section
-  sed -n "/^## Phase ${PADDED_PHASE}:\|^## Phase ${PHASE_PATTERN}:/,/^## Phase [0-9]\|^---\|^# /p" "$ROADMAP_FILE" | head -n -1
+  # Use sed '$d' instead of head -n -1 for macOS compatibility
+  sed -n "/^## Phase ${PADDED_PHASE}:\|^## Phase ${PHASE_PATTERN}:/,/^## Phase [0-9]\|^---\|^# /p" "$ROADMAP_FILE" | sed '$d'
 }
 ```
 
@@ -67,16 +68,16 @@ Extract only decisions relevant to current phase execution.
 
 **Input:** Full STATE.md content, phase number
 
-**Output:** Current position + phase-relevant decisions + global decisions:
+**Output:** Current position + phase-relevant decisions + roadmap decisions:
 ```
 ## Current Position
 Phase: 03-authentication
 Status: executing
 
 ## Relevant Decisions
-- [Global] All API responses use JSON format
-- [Phase 03] Use bcrypt for password hashing (security requirement)
-- [Phase 03] JWT expiry set to 1 hour (from AUTH-02)
+- [Roadmap] All API responses use JSON format
+- [03-01] Use bcrypt for password hashing (security requirement)
+- [03-02] JWT expiry set to 1 hour (from AUTH-02)
 ```
 
 **Bash implementation:**
@@ -91,20 +92,17 @@ extract_relevant_decisions() {
 
   # Extract Current Position section (everything until next ## heading)
   echo "## Current Position"
-  sed -n '/^## Current Position/,/^## /p' "$STATE_FILE" | tail -n +2 | head -n -1
+  # Use sed '$d' for macOS compatibility
+  sed -n '/^## Current Position/,/^## /p' "$STATE_FILE" | tail -n +2 | sed '$d'
 
   echo ""
   echo "## Relevant Decisions"
 
-  # Extract Global decisions
-  grep -E "^- \[Global\]" "$STATE_FILE" 2>/dev/null || true
+  # Extract global decisions (Roadmap-level)
+  grep -E "^- \[Roadmap\]" "$STATE_FILE" 2>/dev/null || true
 
-  # Extract phase-specific decisions (match both padded and unpadded)
-  grep -E "^- \[Phase ${PADDED_PHASE}\]|^- \[Phase ${PHASE_PATTERN}\]" "$STATE_FILE" 2>/dev/null || true
-
-  # Extract previous phase decisions if marked as dependencies
-  # (decisions tagged with "→ affects Phase XX" where XX is current phase)
-  grep -E "→ affects Phase ${PADDED_PHASE}|→ affects Phase ${PHASE_PATTERN}" "$STATE_FILE" 2>/dev/null || true
+  # Extract phase-specific decisions (pattern: [XX-YY] where XX is current phase)
+  grep -E "^- \[${PADDED_PHASE}-[0-9]+\]" "$STATE_FILE" 2>/dev/null || true
 }
 ```
 
@@ -139,14 +137,16 @@ extract_phase_goal() {
   local PADDED_PHASE=$(printf "%02d" "$PHASE_PATTERN" 2>/dev/null || echo "$PHASE_NUM")
 
   # Extract phase header, goal line, and must-haves section only
-  local PHASE_SECTION=$(sed -n "/^## Phase ${PADDED_PHASE}:\|^## Phase ${PHASE_PATTERN}:/,/^## Phase [0-9]\|^---\|^# /p" "$ROADMAP_FILE" | head -n -1)
+  # Use sed '$d' for macOS compatibility
+  local PHASE_SECTION=$(sed -n "/^## Phase ${PADDED_PHASE}:\|^## Phase ${PHASE_PATTERN}:/,/^## Phase [0-9]\|^---\|^# /p" "$ROADMAP_FILE" | sed '$d')
 
   # Print header and goal
   echo "$PHASE_SECTION" | head -2
 
   # Extract Must-haves section
   echo ""
-  echo "$PHASE_SECTION" | sed -n '/^Must-haves:/,/^[A-Z]/p' | head -n -1
+  # Use sed '$d' for macOS compatibility
+  echo "$PHASE_SECTION" | sed -n '/^Must-haves:/,/^[A-Z]/p' | sed '$d'
 }
 ```
 
