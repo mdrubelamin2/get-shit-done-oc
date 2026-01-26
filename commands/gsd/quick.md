@@ -166,7 +166,6 @@ Return: ## PLANNING COMPLETE with plan path
 </output>
 ",
   subagent_type="gsd-planner",
-  model="{planner_model}",
   description="Quick plan: ${DESCRIPTION}"
 )
 ```
@@ -200,7 +199,6 @@ Project state: @.planning/STATE.md
 </constraints>
 ",
   subagent_type="gsd-executor",
-  model="{executor_model}",
   description="Execute: ${DESCRIPTION}"
 )
 ```

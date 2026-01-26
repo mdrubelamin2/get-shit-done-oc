@@ -208,7 +208,6 @@ Write research findings to: {phase_dir}/{phase}-RESEARCH.md
 Task(
   prompt="First, read ~/.claude/agents/gsd-phase-researcher.md for your role and instructions.\n\n" + research_prompt,
   subagent_type="general-purpose",
-  model="{researcher_model}",
   description="Research Phase {phase}"
 )
 ```
@@ -317,7 +316,6 @@ Before returning PLANNING COMPLETE:
 Task(
   prompt="First, read ~/.claude/agents/gsd-planner.md for your role and instructions.\n\n" + filled_prompt,
   subagent_type="general-purpose",
-  model="{planner_model}",
   description="Plan Phase {phase}"
 )
 ```
@@ -389,7 +387,6 @@ Return one of:
 Task(
   prompt=checker_prompt,
   subagent_type="gsd-plan-checker",
-  model="{checker_model}",
   description="Verify Phase {phase} plans"
 )
 ```
@@ -447,7 +444,6 @@ Return what changed.
 Task(
   prompt="First, read ~/.claude/agents/gsd-planner.md for your role and instructions.\n\n" + revision_prompt,
   subagent_type="general-purpose",
-  model="{planner_model}",
   description="Revise Phase {phase} plans"
 )
 ```
