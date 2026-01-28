@@ -12,6 +12,15 @@
 [![GitHub stars](https://img.shields.io/github/stars/glittercowboy/get-shit-done?style=for-the-badge&logo=github&color=181717)](https://github.com/glittercowboy/get-shit-done)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
 
+> ### 🚀 Native Antigravity Integration
+> Get-Shit-Done now features a comprehensive **Native Adaptation** for Antigravity, including:
+> - **Intelligent Compiler**: Transforms GSD Agents into Skills and Commands into Workflows with automated **10K character limit splitting** and sub-workflow orchestration.
+> - **Manifest-Aware Manager**: A custom installer/uninstaller that handles global and local deployments with precision, protecting your custom assets while cleaning up GSD-specific logic.
+> - **Smart Rule Management**: Advanced instruction merging that uses `<!-- GSD_START -->` markers to perform **Smart Replacements** of rules, preserving your personal instructions.
+> - **Platform-Agnostic Design**: Fully stripped of specific AI model references for a truly portable development experience.
+>
+> **[Read the Full Antigravity Integration Guide →](ANTIGRAVITY_GUIDE.md)**
+
 <br>
 
 ```bash

@@ -40,6 +40,9 @@
   },
   "scripts": {
     "build:hooks": "node scripts/build-hooks.js",
+    "build:antigravity": "node scripts/compile-antigravity.js",
+    "install:antigravity": "node bin/antigravity-installer.js",
+    "uninstall:antigravity": "node bin/antigravity-installer.js --uninstall",
     "prepublishOnly": "npm run build:hooks"
   }
 }
