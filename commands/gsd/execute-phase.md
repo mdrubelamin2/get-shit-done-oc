@@ -401,23 +401,14 @@ fi
 
 ```
 # Base prompt template (uses CONTEXT_FOR_EXECUTOR instead of raw STATE)
+# NOTE: @-references do NOT work across Task() boundaries - the gsd-executor agent
+# has built-in instructions and doesn't need external workflow references
 EXECUTOR_PROMPT="Execute plan at {plan_path}
-
-Execution workflow: @~/.claude/get-shit-done/workflows/${WORKFLOW_FILE}
 
 Plan:
 {plan_content}
 
 {context_for_executor}"
-
-# Add checkpoint reference based on lazy_references flag
-if [ "$LAZY_REFERENCES" = "false" ] || [ "$PLAN_AUTONOMOUS" = "false" ]; then
-  # Include checkpoint reference for non-autonomous plans or when lazy_references disabled
-  EXECUTOR_PROMPT="${EXECUTOR_PROMPT}
-
-Checkpoint reference: @~/.claude/get-shit-done/references/checkpoints-minimal.md"
-fi
-# Note: autonomous plans with lazy_references=true skip checkpoint reference entirely
 ```
 
 Spawn all plans in a wave with a single message containing multiple Task calls:
