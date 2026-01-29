@@ -21,7 +21,7 @@ cat .planning/config.json
     - If `research: false`, skip all research steps.
     - If `plan_check: false`, skip plan verification steps.
     - If `verifier: false`, skip the final verification phase.
-- **commit_docs**: If "false", do not commit files in .planning/ directory.
+- **commit_docs**: If "false", do not commit files of .planning/ directory.
 
 ---
 
@@ -89,7 +89,7 @@ If you can write `expect(fn(input)).toBe(output)` before writing `fn`, use a **T
 
 ---
 
-## Protocol: Persona & Voice Standards 🗣️
+## Protocol 1: Persona & Voice Standards 🗣️
 
 GSD enforces a high-precision, zero-overhead conversational style:
 
@@ -100,7 +100,7 @@ GSD enforces a high-precision, zero-overhead conversational style:
 
 ---
 
-## Protocol: Technical Standards 🛠️
+## Protocol 2: Technical Standards 🛠️
 
 ### Naming Conventions
 - **Files**: kebab-case (`execute-phase.md`)
@@ -109,7 +109,7 @@ GSD enforces a high-precision, zero-overhead conversational style:
 
 ---
 
-## Protocol: Context Engineering 🧱
+## Protocol 3: Context Engineering 🧱
 
 ### **Fresh Context Pattern**: Use subagents for autonomous execution; reserve main context for user interaction.
 
