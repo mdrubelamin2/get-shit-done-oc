@@ -127,6 +127,9 @@ function compileTaskInvocation(taskMatch, agentType, prompt) {
   return `
 ## ${skillName.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
 
+**Context:** You are operating in the user's PROJECT DIRECTORY.
+**CRITICAL:** Execute all commands (ls, cat, mkdir) in the current working directory. DO NOT cd into the workflow source directories.
+
 **Task Context:**
 ${promptStr}
 
@@ -135,10 +138,11 @@ ${promptStr}
    \`\`\`
    View file: .agent/skills/${skillName}/SKILL.md
    \`\`\`
-2. Follow the skill's instructions, applying them to the task context above
+2. Follow the skill's instructions, applying them to the task context above. Note: You are Antigravity, follow the instructions as Antigravity.
 3. Create outputs as specified in the skill
 `;
 }
+
 
 function addTurboAnnotations(content) {
   // Add // turbo to safe read-only commands
@@ -203,37 +207,43 @@ function makeContentPlatformAgnostic(content) {
   // "Model lookup table:" pattern specifically
   result = result.replace(/\*\*Model lookup table:\*\*[\s\S]*?(?=## |$)/g, '');
 
-  // Replace "Claude" with "AI assistant" or "the assistant" in instructional contexts
+  // Replace "Claude" with "Antigravity" in instructional contexts
 
   // "Claude Code" or "Claude.ai" references
-  result = result.replace(/\bClaude Code\b/gi, 'the AI assistant');
-  result = result.replace(/\bClaude\.ai\b/gi, 'the AI platform');
+  result = result.replace(/\bClaude Code\b/gi, 'Antigravity');
+  result = result.replace(/\bClaude\.ai\b/gi, 'Antigravity');
 
-  // "Claude is the builder" → "The AI assistant is the builder"
-  result = result.replace(/\bClaude is the (builder|implementer|executor)\b/gi, 'The AI assistant is the $1');
+  // "Claude is the builder" → "Antigravity is the builder"
+  result = result.replace(/\bClaude is the (builder|implementer|executor)\b/gi, 'Antigravity is the $1');
 
-  // "Claude does X" → "The assistant does X"
-  result = result.replace(/\bClaude (does|can|should|must|will|has|reads|needs|starts|records|presents)\b/gi, 'The assistant $1');
+  // "Claude does X" → "Antigravity does X"
+  result = result.replace(/\bClaude (does|can|should|must|will|has|reads|needs|starts|records|presents)\b/gi, 'Antigravity $1');
 
-  // "for Claude" → "for the assistant"
-  result = result.replace(/\bfor Claude\b/gi, 'for the assistant');
+  // "for Claude" → "for Antigravity"
+  result = result.replace(/\bfor Claude\b/gi, 'for Antigravity');
 
-  // "Claude's X" → "The assistant's X"
-  result = result.replace(/\bClaude's ([a-z]+)\b/gi, "The assistant's $1");
+  // "Claude's X" → "Antigravity's X"
+  result = result.replace(/\bClaude's ([a-z]+)\b/gi, "Antigravity's $1");
 
-  // "a different Claude instance" → "a different AI instance"
-  result = result.replace(/\ba different Claude instance\b/gi, 'a different AI instance');
+  // "a different Claude instance" → "a different Antigravity instance"
+  result = result.replace(/\ba different Claude instance\b/gi, 'a different Antigravity instance');
 
   // "Claude (subagent)" or "Claude (gsd-X)"
-  result = result.replace(/\bClaude \(subagent\)/gi, 'AI assistant (subagent)');
-  result = result.replace(/\bClaude \(gsd-/gi, 'AI assistant (gsd-');
+  result = result.replace(/\bClaude \(subagent\)/gi, 'Antigravity (subagent)');
+  result = result.replace(/\bClaude \(gsd-/gi, 'Antigravity (gsd-');
 
-  // "CLAUDE.md" -> "INSTRUCTIONS.md" or generic "CLAUDE" -> "INSTRUCTIONS"
-  result = result.replace(/\bCLAUDE\.md\b/g, 'INSTRUCTIONS.md');
-  result = result.replace(/\bCLAUDE\b/g, 'INSTRUCTIONS');
+  // "CLAUDE.md" -> "ANTIGRAVITY.md" or generic "CLAUDE" -> "ANTIGRAVITY"
+  result = result.replace(/\bCLAUDE\.md\b/g, 'GEMINI.md');
+  result = result.replace(/\bCLAUDE\b/g, 'ANTIGRAVITY');
 
   // Generic "Claude" at word boundaries that weren't caught
-  result = result.replace(/\bClaude\b/g, 'the assistant');
+  result = result.replace(/\bClaude\b/g, 'Antigravity');
+
+
+  // Inject explicit CWD instruction into <process> blocks
+  if (result.includes('<process>') && !result.includes('**CRITICAL:** Execute all commands')) {
+    result = result.replace(/<process>/g, `<process>\n\n> [!IMPORTANT]\n> **Context:** You are operating in the user's PROJECT DIRECTORY.\n> **CRITICAL:** Execute all commands (ls, cat, mkdir) in the current working directory. DO NOT cd into the workflow source directories.\n`);
+  }
 
   return result;
 }
@@ -538,9 +548,9 @@ function generateGeminiInstructions() {
 
   const rulesDir = path.join(CONFIG.outputDir, 'rules');
   ensureDir(rulesDir);
-  const outputPath = path.join(rulesDir, 'GSD_GEMINI.md');
+  const outputPath = path.join(rulesDir, 'GEMINI.md');
   fs.writeFileSync(outputPath, content);
-  console.log('✓ Created strict instructions: rules/GSD_GEMINI.md');
+  console.log('✓ Created strict instructions: rules/GEMINI.md');
 }
 
 // ============================================================================
@@ -576,7 +586,7 @@ function main() {
   console.log(`   Skills:    ${skills.length}`);
   console.log(`   Workflows: ${workflows.length}`);
   console.log(`   Resources: templates, references, workflows`);
-  console.log(`   Strictness: GSD_GEMINI.md generated`);
+  console.log(`   Strictness: GEMINI.md generated`);
   console.log(`\n📁 Output: ${CONFIG.outputDir}`);
   console.log(`\n📖 Next Steps:`);
   console.log(`   1. Review compiled files in .agent/`);
