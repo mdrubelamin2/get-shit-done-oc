@@ -1,7 +1,7 @@
 {
-  "name": "get-shit-done-oc",
-  "version": "1.9.13",
-  "description": "A meta-prompting, context engineering and spec-driven development system for Claude Code by TÂCHES.",
+  "name": "get-shit-done-cc",
+  "version": "2.1.3",
+  "description": "A meta-prompting, context engineering and spec-driven development system for Claude Code, OpenCode and Gemini by TÂCHES.",
   "bin": {
     "get-shit-done-oc": "bin/install.js"
   },
